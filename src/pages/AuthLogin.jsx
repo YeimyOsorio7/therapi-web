@@ -5,27 +5,51 @@ const AuthLogin = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    const found = users.find(
-      (u) => u.username === form.username && u.password === form.password
-    );
+    
+    // Validación básica
+    if (!form.username.trim() || !form.password.trim()) {
+      setError("Por favor, complete todos los campos");
+      return;
+    }
 
-    if (found) {
-      localStorage.setItem("currentUser", form.username);
+    setError("");
+    setIsLoading(true);
 
-      if (form.username === "psicologa") {
-        // acceso al panel interno
-        localStorage.setItem("auth", "true"); // para los guards del admin
+    try {
+      // Simular delay de autenticación
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // const users = JSON.parse(localStorage.getItem("users") || "[]");
+      
+      // Verificar credenciales de administrador
+      if (form.username === "psicologa" && form.password === "1234") {
+        localStorage.setItem("auth", "true");
+        localStorage.setItem("currentUser", form.username);
+        localStorage.setItem("userRole", "admin");
         navigate("/admin-panel");
-      } else {
-        // usuario regular → chatbot
-        navigate("/chat");
+        return;
       }
-    } else {
-      setError("Usuario o contraseña incorrectos");
+
+      // // Verificar usuarios regulares
+      // const found = users.find(
+      //   (u) => u.username === form.username && u.password === form.password
+      // );
+
+      if (form.username && form.password) {
+        localStorage.setItem("currentUser", form.username);
+        localStorage.setItem("userRole", "user");
+        navigate("/chat");
+      } else {
+        setError("Usuario o contraseña incorrectos");
+      }
+    } catch {
+      setError("Error al iniciar sesión. Intente nuevamente.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -59,9 +83,10 @@ const AuthLogin = () => {
 
         <button
           type="submit"
-          className="w-full bg-indigo-500 hover:bg-indigo-600 text-white font-semibold py-2 px-4 rounded transition"
+          disabled={isLoading}
+          className="w-full bg-indigo-500 hover:bg-indigo-600 disabled:bg-indigo-300 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded transition"
         >
-          Ingresar
+          {isLoading ? "Iniciando sesión..." : "Ingresar"}
         </button>
 
         <div className="text-center text-sm">

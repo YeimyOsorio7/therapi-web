@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { create_response } from '../services/openai.js';
 
 const ChatBot = () => {
   const [messages, setMessages] = useState([]);
@@ -7,34 +8,46 @@ const ChatBot = () => {
   const chatRef = useRef(null);
   const inputRef = useRef(null);
 
-const handleSend = async () => {
-  if (!input.trim() || isLoading) return;
+  // New: logout handler
+  const handleLogout = () => {
+    alert('Gracias por usar el asistente. ¡Hasta pronto!');
+    window.location.href = '/';
+  };
 
-  const userMessage = { sender: 'user', text: input };
-  setMessages((prev) => [...prev, userMessage]);
-  setInput('');
-  setIsLoading(true);
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return;
 
-  try {
-    const response = await fetch('http://localhost:3001/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: input }),
-    });
+    const userMessage = { sender: 'user', text: input };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput('');
+    setIsLoading(true);
 
-    const data = await response.json();
-    const botResponse = { sender: 'bot', text: data.reply };
-    setMessages((prev) => [...prev, botResponse]);
-  } catch (error) {
-    console.error('Error:', error);
-    setMessages((prev) => [...prev, {
-      sender: 'bot',
-      text: 'Error al conectar con el servidor. Intenta más tarde.'
-    }]);
-  } finally {
-    setIsLoading(false);
-  }
-};
+    try {
+      // Preparar toda la conversación para mantener el contexto
+      const conversationHistory = [...messages, userMessage].map(msg => ({
+        role: msg.sender === 'user' ? 'user' : 'assistant',
+        content: msg.text
+      }));
+
+      // Llamar al servicio de OpenAI con toda la conversación
+      const response = await create_response(conversationHistory);
+      console.log("Response from create_response:", response);
+      
+      // Extraer el contenido de la respuesta del modelo
+      const botText = response;
+      
+      const botResponse = { sender: 'bot', text: botText };
+      setMessages((prev) => [...prev, botResponse]);
+    } catch (error) {
+      console.error('Error:', error);
+      setMessages((prev) => [...prev, {
+        sender: 'bot',
+        text: 'Error al conectar con el servicio de IA. Intenta más tarde.'
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     // Mensaje inicial del bot
@@ -54,9 +67,17 @@ const handleSend = async () => {
 
   return (
     <div className="w-full max-w-2xl bg-white dark:bg-gray-800 dark:text-white p-6 rounded-2xl shadow-xl border border-sky-100 dark:border-gray-700 transition-colors">
-      <h2 className="text-2xl font-semibold mb-5 text-center text-sky-700 dark:text-sky-300">
-        🧘 Asistente Emocional Virtual
-      </h2>
+      <div className="mb-5 flex items-center justify-between">
+        <h2 className="text-2xl font-semibold text-center text-sky-700 dark:text-sky-300">
+          🧘 Asistente Emocional Virtual
+        </h2>
+        <button
+          onClick={handleLogout}
+          className="bg-rose-500 hover:bg-rose-600 text-white px-3 py-2 rounded-xl text-sm transition-all"
+        >
+          Terminar sesión
+        </button>
+      </div>
 
       <div
         ref={chatRef}
