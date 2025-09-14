@@ -22,22 +22,15 @@ const AuthLogin = () => {
     try {
       // Simular delay de autenticación
       await new Promise(resolve => setTimeout(resolve, 500));
-
-      // const users = JSON.parse(localStorage.getItem("users") || "[]");
       
       // Verificar credenciales de administrador
       if (form.username === "psicologa" && form.password === "1234") {
         localStorage.setItem("auth", "true");
         localStorage.setItem("currentUser", form.username);
         localStorage.setItem("userRole", "admin");
-        navigate("/admin-panel");
+        navigate("/admin/citas");
         return;
       }
-
-      // // Verificar usuarios regulares
-      // const found = users.find(
-      //   (u) => u.username === form.username && u.password === form.password
-      // );
 
       if (form.username && form.password) {
         localStorage.setItem("currentUser", form.username);

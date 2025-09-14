@@ -25,10 +25,9 @@ const Login = () => {
     // Simulación de autenticación
     if (form.user === 'psicologa' && form.password === '1234') {
       localStorage.setItem('auth', 'true');
-      navigate('/admin');
+      navigate('/admin/citas');
     } else {
       navigate('/src/components/ChatBot.jsx')
-      // setError('❌ Usuario o contraseña incorrectos');
     }
   };
 
