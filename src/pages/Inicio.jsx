@@ -30,8 +30,7 @@ const Inicio = () => {
           </h2>
           <p className="mt-4 text-lg text-gray-700 dark:text-gray-300">
             Esta plataforma integra un asistente virtual impulsado por inteligencia artificial
-            para brindar orientación emocional inicial y herramientas de autocuidado. Además,
-            facilita la gestión de citas, notas clínicas, recursos y estadísticas para la psicóloga.
+            para brindar orientación emocional inicial y herramientas de autocuidado.
           </p>
 
           {/* Un solo set de botones */}
@@ -61,7 +60,6 @@ const Inicio = () => {
           <h3 className="text-xl font-bold mb-2">¿Cómo funciona?</h3>
           <ul className="list-disc pl-5 space-y-2">
             <li>El chatbot ofrece apoyo emocional inicial y psicoeducación.</li>
-            <li>La psicóloga gestiona citas, notas, recursos y pacientes en el panel privado.</li>
             <li>Los usuarios pueden agendar citas y recibir material de apoyo.</li>
             <li>Interfaz clara con modo claro/oscuro agradable.</li>
           </ul>

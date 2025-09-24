@@ -30,7 +30,11 @@ const AuthLogin = () => {
         localStorage.setItem("userRole", "admin");
         navigate("/admin/citas");
         return;
+      }else {
+        setError("Usuario o contraseña incorrectos");
       }
+
+
 
       if (form.username && form.password) {
         localStorage.setItem("currentUser", form.username);

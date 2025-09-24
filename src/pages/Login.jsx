@@ -27,8 +27,8 @@ const Login = () => {
       localStorage.setItem('auth', 'true');
       navigate('/admin/citas');
     } else {
-      navigate('/src/components/ChatBot.jsx')
-    }
+        setError("Usuario o contraseña incorrectos");
+      }
   };
 
   return (
